@@ -52,7 +52,7 @@ public class ItemRepositoryImpl implements ItemRepository {
         if (!text.isEmpty()) {
             return items.values().stream()
                     .filter(item -> item.getName().toLowerCase().contains(text.toLowerCase()) ||
-                            item.getDescription().toLowerCase().contains(text.toLowerCase()) & item.getAvailable())
+                            item.getDescription().toLowerCase().contains(text.toLowerCase()) && item.getAvailable())
                     .collect(Collectors.toList());
         } else {
             return new ArrayList<>();
