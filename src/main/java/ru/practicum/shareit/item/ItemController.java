@@ -8,10 +8,7 @@ import ru.practicum.shareit.groups.Update;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.mapper.UserMapper;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @AllArgsConstructor
