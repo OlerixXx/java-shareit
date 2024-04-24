@@ -14,4 +14,6 @@ public interface UserRepository {
 
     void remove(Long userId);
 
+    void isExist(Long userId);
+
 }

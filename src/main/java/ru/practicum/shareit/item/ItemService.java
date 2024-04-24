@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.item.model.Item;
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ItemService {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
@@ -24,7 +25,7 @@ public class ItemService {
     }
 
     public Item update(Long userId, Item item) {
-        if (!userRepository.getUser(userId).getName().equals(itemRepository.getItem(item.getId()).getOwner())) {
+        if (!ownerMatches(userId, item.getId())) {
             throw new NoSuchElementException();
         } else {
             return itemRepository.update(item);
@@ -32,7 +33,7 @@ public class ItemService {
     }
 
     public Item getItem(Long userId, Long itemId) {
-        userRepository.getUser(userId);
+        userRepository.isExist(userId);
         return itemRepository.getItem(itemId);
     }
 
@@ -44,8 +45,12 @@ public class ItemService {
     }
 
     public List<Item> search(Long userId, String text) {
-        userRepository.getUser(userId);
+        userRepository.isExist(userId);
         return itemRepository.search(text);
+    }
+
+    private boolean ownerMatches(Long userId, Long itemId) {
+        return userRepository.getUser(userId).getName().equals(itemRepository.getItem(itemId).getOwner());
     }
 
 }

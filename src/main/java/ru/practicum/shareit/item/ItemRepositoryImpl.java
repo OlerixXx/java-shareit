@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.*;
@@ -49,7 +50,7 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public List<Item> search(String text) {
-        if (!text.isEmpty()) {
+        if (StringUtils.hasText(text)) {
             return items.values().stream()
                     .filter(item -> item.getName().toLowerCase().contains(text.toLowerCase()) ||
                             item.getDescription().toLowerCase().contains(text.toLowerCase()) && item.getAvailable())

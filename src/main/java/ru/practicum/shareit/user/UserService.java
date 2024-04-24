@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -8,7 +9,7 @@ import java.util.List;
 
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
 
@@ -30,5 +31,9 @@ public class UserService {
 
     public void remove(Long userId) {
         userRepository.remove(userId);
+    }
+
+    public void isExist(Long userId) {
+        userRepository.isExist(userId);
     }
 }
