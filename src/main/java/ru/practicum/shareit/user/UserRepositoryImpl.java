@@ -57,8 +57,8 @@ public class UserRepositoryImpl implements UserRepository {
         users.remove(userId);
     }
 
-    public void isExist(Long userId) {
-        getUser(userId);
+    public boolean isExist(Long userId) {
+        return users.containsKey(userId);
     }
 
     private Long generateId() {

@@ -32,7 +32,9 @@ public class ItemService {
     }
 
     public Item getItem(Long userId, Long itemId) {
-        userRepository.isExist(userId);
+        if (!userRepository.isExist(userId)) {
+            throw new NoSuchElementException();
+        }
         return itemRepository.getItem(itemId);
     }
 
@@ -44,7 +46,9 @@ public class ItemService {
     }
 
     public List<Item> search(Long userId, String text) {
-        userRepository.isExist(userId);
+        if (!userRepository.isExist(userId)) {
+            throw new NoSuchElementException();
+        }
         return itemRepository.search(text);
     }
 
