@@ -31,8 +31,4 @@ public class UserService {
     public void remove(Long userId) {
         userRepository.remove(userId);
     }
-
-    public void isExist(Long userId) {
-        userRepository.isExist(userId);
-    }
 }
