@@ -19,41 +19,41 @@ public class ItemService {
     private final ItemRepository itemRepository;
 
     public Item create(Long userId, Item item) {
-        item.setOwner(userRepository.getUser(userId).getName());
-        return itemRepository.create(item);
+        item.setOwner(userRepository.findById(userId).orElseThrow().getName());
+        return itemRepository.save(item);
     }
 
     public Item update(Long userId, Item item) {
         if (!ownerMatches(userId, item.getId())) {
             throw new NoSuchElementException();
         } else {
-            return itemRepository.update(item);
+            return itemRepository.save(item);
         }
     }
 
     public Item getItem(Long userId, Long itemId) {
-        if (!userRepository.isExist(userId)) {
+        if (!userRepository.isExists(userId)) {
             throw new NoSuchElementException();
         }
-        return itemRepository.getItem(itemId);
+        return itemRepository.findById(itemId).orElseThrow();
     }
 
     public List<Item> getAll(Long userId) {
-        User user = userRepository.getUser(userId);
-        return itemRepository.getAll().stream()
+        User user = userRepository.findById(userId).orElseThrow();
+        return itemRepository.findAll().stream()
                 .filter(item -> item.getOwner().equals(user.getName()))
                 .collect(Collectors.toList());
     }
 
     public List<Item> search(Long userId, String text) {
-        if (!userRepository.isExist(userId)) {
+        if (!userRepository.isExists(userId)) {
             throw new NoSuchElementException();
         }
-        return itemRepository.search(text);
+        return itemRepository.findByNameContaining(text);
     }
 
     private boolean ownerMatches(Long userId, Long itemId) {
-        return userRepository.getUser(userId).getName().equals(itemRepository.getItem(itemId).getOwner());
+        return userRepository.findById(userId).orElseThrow().getName().equals(itemRepository.findById(itemId).orElseThrow().getOwner());
     }
 
 }
