@@ -1,41 +1,19 @@
 package ru.practicum.shareit.user;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
-@Slf4j
-@Service
-@Transactional
-@RequiredArgsConstructor
-public class UserService {
-    private final UserRepository userRepository;
+public interface UserService {
 
-    @Transactional
-    public User create(User user) {
-        return userRepository.save(user);
-    }
+    User create(User user);
 
-    @Transactional
-    public User update(User user) {
-        return userRepository.save(user);
-    }
+    User update(User user);
 
-    public User getUser(Long userId) {
-        return userRepository.findById(userId).orElseThrow(NoSuchElementException::new);
-    }
+    User getUser(Long userId);
 
-    public List<User> getAll() {
-        return userRepository.findAll();
-    }
+    List<User> getAll();
 
-    @Transactional
-    public void remove(Long userId) {
-        userRepository.deleteById(userId);
-    }
+    void remove(Long userId);
 }
