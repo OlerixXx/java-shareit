@@ -1,9 +1,8 @@
 package ru.practicum.shareit.user;
 
-import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 public interface UserService {
 

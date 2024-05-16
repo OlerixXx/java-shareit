@@ -4,11 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.exception.EmailAlreadyExistsException;
+import org.springframework.util.StringUtils;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -19,14 +19,18 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public User create(User user) {
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new EmailAlreadyExistsException();
-        }
         return userRepository.save(user);
     }
 
     @Transactional
     public User update(User user) {
+        User oldUser = userRepository.findById(user.getId()).orElseThrow(NoSuchElementException::new);
+        if (!StringUtils.hasText(user.getEmail())) {
+            user.setEmail(oldUser.getEmail());
+        }
+        if (!StringUtils.hasText(user.getName())) {
+            user.setName(oldUser.getName());
+        }
         return userRepository.save(user);
     }
 
