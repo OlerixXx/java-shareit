@@ -99,7 +99,7 @@ public class ItemServiceImpl implements ItemService {
         Booking nextBooking = bookingRepository.findNextBooking(LocalDateTime.now(), item.getId()).orElse(null);
         Booking lastBooking = bookingRepository.findLastBooking(LocalDateTime.now(), item.getId()).orElse(null);
         List<CommentRequestDto> comments = CommentMapper.toListCommentRequestDto(commentRepository.findAllByItem(item));
-        if (item.getOwner().getId() == userId && lastBooking != null) {
+        if (item.getOwner().getId().equals(userId) && lastBooking != null) {
             return ItemMapper.toItemRequest(item, nextBooking, lastBooking, comments);
         } else {
             return ItemMapper.toItemRequest(item, null, null, comments);

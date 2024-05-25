@@ -30,7 +30,7 @@ public class BookingServiceImpl implements BookingService {
     public Booking create(Long userId, BookingDto bookingDto) {
         Item item = itemRepository.findById(bookingDto.getItemId()).orElseThrow(NoSuchElementException::new);
         User user = userExists(userId);
-        if (item.getOwner().getId() == userId) {
+        if (item.getOwner().getId().equals(userId)) {
             throw new NoSuchElementException();
         } else if (item.getAvailable()) {
             return bookingRepository.save(BookingMapper.toBooking(bookingDto, user, item));
@@ -44,7 +44,7 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(NoSuchElementException::new);
         if (booking.getStatus() == Status.APPROVED) {
             throw new IllegalArgumentException();
-        } else if (booking.getItem().getOwner().getId() == userId) {
+        } else if (booking.getItem().getOwner().getId().equals(userId)) {
             booking.setStatus(approved ? Status.APPROVED : Status.REJECTED);
             return bookingRepository.save(booking);
         } else {
@@ -55,7 +55,7 @@ public class BookingServiceImpl implements BookingService {
 
     public Booking getBooking(Long userId, Long bookingId) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(NoSuchElementException::new);
-        if (booking.getBooker().getId() == userId || booking.getItem().getOwner().getId() == userId) {
+        if (booking.getBooker().getId().equals(userId) || booking.getItem().getOwner().getId().equals(userId)) {
             return booking;
         } else {
             throw new NoSuchElementException();
