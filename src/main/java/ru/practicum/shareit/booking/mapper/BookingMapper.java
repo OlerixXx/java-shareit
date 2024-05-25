@@ -29,7 +29,7 @@ public class BookingMapper {
 
     public static BookingRequestDto toRequest(Booking booking) {
         return new BookingRequestDto(
-                booking == null ? null : booking.getId(),
+                booking.getId() == null ? null : booking.getId(),
                 booking.getBooker() == null ? null : booking.getBooker().getId()
         );
     }
