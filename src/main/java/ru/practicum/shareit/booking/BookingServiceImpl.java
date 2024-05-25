@@ -34,7 +34,9 @@ public class BookingServiceImpl implements BookingService {
             throw new NoSuchElementException();
         } else if (item.getAvailable()) {
             return bookingRepository.save(BookingMapper.toBooking(bookingDto, user, item));
-        } else { throw new IllegalArgumentException(); }
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 
     @Transactional
