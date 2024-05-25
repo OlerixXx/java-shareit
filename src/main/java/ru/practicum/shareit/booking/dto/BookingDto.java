@@ -4,19 +4,23 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.groups.Create;
+import ru.practicum.shareit.groups.Update;
+import ru.practicum.shareit.validator.EndAfterStart;
 
-import javax.validation.constraints.NotBlank;
-import java.time.Instant;
+import javax.validation.constraints.FutureOrPresent;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EndAfterStart(message = "Дата окончания должна быть позже даты начала", groups = {Create.class, Update.class})
 public class BookingDto {
-    @NotBlank(message = "Идентификатор не может быть пустым.", groups = Create.class)
-    private Long item_id;
-    @NotBlank(message = "Время начала не может быть пустым.", groups = Create.class)
-    private Instant start;
-    @NotBlank(message = "Время окончания не может быть пустым.", groups = Create.class)
-    private Instant end;
-
+    private Long itemId;
+    @NotNull(groups = Create.class)
+    @FutureOrPresent(message = "Дата начала не может быть в прошлом", groups = {Create.class, Update.class})
+    private LocalDateTime start;
+    @NotNull(groups = Create.class)
+    @FutureOrPresent(message = "Дата окончания не может быть в прошлом", groups = {Create.class, Update.class})
+    private LocalDateTime end;
 }

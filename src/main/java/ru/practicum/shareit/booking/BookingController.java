@@ -4,13 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.groups.Create;
-import ru.practicum.shareit.groups.Update;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
 
@@ -35,13 +30,13 @@ public class BookingController {
         return bookingService.getBooking(userId, bookingId);
     }
 
-    @GetMapping(params = "state")
-    public List<Booking> getAllBookings(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam(required = false, defaultValue = "ALL") Status state){
+    @GetMapping()
+    public List<Booking> getAllBookings(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam(required = false, defaultValue = "ALL") String state){
         return bookingService.getAllBookings(userId, state);
     }
 
-    @GetMapping(value = "/owner", params = "state")
-    public List<Booking> getAllBookingItems(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam(required = false, defaultValue = "ALL") Status state){
+    @GetMapping("/owner")
+    public List<Booking> getAllBookingItems(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam(required = false, defaultValue = "ALL") String state){
         return bookingService.getAllBookingItems(userId, state);
     }
 }

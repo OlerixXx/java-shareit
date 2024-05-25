@@ -5,11 +5,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.groups.Create;
 import ru.practicum.shareit.groups.Update;
+import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.dto.CommentRequestDto;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.mapper.ItemMapper;
+import ru.practicum.shareit.item.dto.ItemRequestDto;
 import ru.practicum.shareit.item.model.Item;
 
-import java.util.Collections;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -20,24 +21,26 @@ public class ItemController {
 
     @PostMapping
     public Item create(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody @Validated(Create.class) ItemDto itemDto) {
-        Item item = ItemMapper.toItem(itemDto);
-        return itemService.create(userId, item);
+        return itemService.create(userId, itemDto);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentRequestDto create(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long itemId, @RequestBody @Validated(Create.class) CommentDto commentDto) {
+        return itemService.create(userId, itemId, commentDto);
     }
 
     @PatchMapping("/{itemId}")
     public Item update(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody @Validated(Update.class) ItemDto itemDto, @PathVariable Long itemId) {
-        Item item = ItemMapper.toItem(itemDto);
-        item.setId(itemId);
-        return itemService.update(userId, item);
+        return itemService.update(userId, itemId, itemDto);
     }
 
     @GetMapping("/{itemId}")
-    public Item getItem(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long itemId) {
+    public ItemRequestDto getItem(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long itemId) {
         return itemService.getItem(userId, itemId);
     }
 
     @GetMapping
-    public List<Item> getAll(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public List<ItemRequestDto> getAll(@RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemService.getAll(userId);
     }
 

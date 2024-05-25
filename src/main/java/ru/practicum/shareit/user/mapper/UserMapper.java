@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserMapper {
@@ -21,7 +21,7 @@ public class UserMapper {
                 null,
                 userDto.getName() != null ? userDto.getName() : null,
                 userDto.getEmail() != null ? userDto.getEmail() : null,
-                Instant.now()
+                LocalDateTime.now()
         );
     }
 }
