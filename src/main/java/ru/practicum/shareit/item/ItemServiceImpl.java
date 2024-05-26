@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
@@ -43,12 +42,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional
     public CommentRequestDto create(Long userId, Long itemId, CommentDto commentDto) {
-        if (bookingRepository.existsBookingsByItemAndBookerAndStatus(
-                itemRepository.findById(itemId).orElseThrow(),
-                userRepository.findById(userId).orElseThrow(),
-                Status.APPROVED) &&
-                bookingRepository.existBookingBeforeNow(LocalDateTime.now(), itemId, userId).isPresent()
-        ) {
+        if (bookingRepository.existsBookings(itemId, userId, Status.APPROVED, LocalDateTime.now())) {
             Comment comment = CommentMapper.toComment(
                     commentDto,
                     itemRepository.findById(itemId).orElseThrow(),

@@ -19,7 +19,6 @@ import java.util.NoSuchElementException;
 
 @Slf4j
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
     private final UserRepository userRepository;
@@ -28,11 +27,9 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional
     public Booking create(Long userId, BookingDto bookingDto) {
-        Item item = itemRepository.findById(bookingDto.getItemId()).orElseThrow(NoSuchElementException::new);
-        User user = userExists(userId);
-        if (item.getOwner().getId().equals(userId)) {
-            throw new NoSuchElementException();
-        } else if (item.getAvailable()) {
+        User user = userRepository.findById(userId).orElseThrow(NoSuchElementException::new);
+        Item item = itemRepository.findByIdAndOwnerIdIsNot(bookingDto.getItemId(), userId).orElseThrow(NoSuchElementException::new);
+        if (item.getAvailable()) {
             return bookingRepository.save(BookingMapper.toBooking(bookingDto, user, item));
         } else {
             throw new IllegalArgumentException();
@@ -41,29 +38,24 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional
     public Booking update(Long userId, Long bookingId, boolean approved) {
-        Booking booking = bookingRepository.findById(bookingId).orElseThrow(NoSuchElementException::new);
+        Booking booking = bookingRepository.findByIdAndItemOwnerId(bookingId, userId).orElseThrow(NoSuchElementException::new);
         if (booking.getStatus() == Status.APPROVED) {
             throw new IllegalArgumentException();
-        } else if (booking.getItem().getOwner().getId().equals(userId)) {
+        } else {
             booking.setStatus(approved ? Status.APPROVED : Status.REJECTED);
             return bookingRepository.save(booking);
-        } else {
-            throw new NoSuchElementException();
         }
 
     }
 
     public Booking getBooking(Long userId, Long bookingId) {
-        Booking booking = bookingRepository.findById(bookingId).orElseThrow(NoSuchElementException::new);
-        if (booking.getBooker().getId().equals(userId) || booking.getItem().getOwner().getId().equals(userId)) {
-            return booking;
-        } else {
-            throw new NoSuchElementException();
-        }
+        return bookingRepository.findByIdAndBookerIdOrItemOwnerId(bookingId, userId, userId).orElseThrow(NoSuchElementException::new);
     }
 
     public List<Booking> getAllBookings(Long userId, String state) {
-        userExists(userId);
+        if (!userRepository.userExists(userId)) {
+            throw new NoSuchElementException();
+        }
         List<Status> statusesInQuery = Status.toStatus(state);
         switch (state) {
             case "CURRENT":
@@ -80,7 +72,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     public List<Booking> getAllBookingItems(Long userId, String state) {
-        User user = userExists(userId);
+        User user = userRepository.findById(userId).orElseThrow(NoSuchElementException::new);
         List<Status> statusesInQuery = Status.toStatus(state);
         switch (state) {
             case "CURRENT":
@@ -96,10 +88,6 @@ public class BookingServiceImpl implements BookingService {
                         itemRepository.findAllByOwner(user), statusesInQuery
                 );
         }
-    }
-
-    private User userExists(Long userId) {
-        return userRepository.findById(userId).orElseThrow(NoSuchElementException::new);
     }
 
 }

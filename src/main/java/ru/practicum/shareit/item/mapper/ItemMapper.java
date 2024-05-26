@@ -42,7 +42,7 @@ public class ItemMapper {
                 item.getAvailable(),
                 item.getOwner(),
                 lastBooking == null ? null : BookingMapper.toRequest(lastBooking),
-                nextBooking == lastBooking || nextBooking == null ? null : BookingMapper.toRequest(nextBooking),
+                nextBooking == null || nextBooking.equals(lastBooking) ? null : BookingMapper.toRequest(nextBooking),
                 comments == null ? new ArrayList<>() : comments
         );
     }
