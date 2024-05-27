@@ -7,6 +7,7 @@ import ru.practicum.shareit.groups.Create;
 import ru.practicum.shareit.groups.Update;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 

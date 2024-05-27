@@ -1,34 +1,18 @@
 package ru.practicum.shareit.user;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 
-@Slf4j
-@Service
-@RequiredArgsConstructor
-public class UserService {
-    private final UserRepository userRepository;
+public interface UserService {
 
-    public User create(User user) {
-        return userRepository.create(user);
-    }
+    User create(User user);
 
-    public User update(User user) {
-        return userRepository.update(user);
-    }
+    User update(User user);
 
-    public User getUser(Long userId) {
-        return userRepository.getUser(userId);
-    }
+    User getUser(Long userId);
 
-    public List<User> getAll() {
-        return userRepository.getAll();
-    }
+    List<User> getAll();
 
-    public void remove(Long userId) {
-        userRepository.remove(userId);
-    }
+    void remove(Long userId);
 }

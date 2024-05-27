@@ -1,19 +1,18 @@
 package ru.practicum.shareit.user;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import ru.practicum.shareit.user.model.User;
+
 import java.util.List;
+import java.util.Optional;
 
-public interface UserRepository {
+public interface UserRepository extends JpaRepository<User, Long> {
 
-    User create(User user);
+    Optional<User> findByEmail(String email);
 
-    User update(User user);
+    List<User> findByEmailContaining(String email);
 
-    User getUser(Long userId);
-
-    List<User> getAll();
-
-    void remove(Long userId);
-
-    boolean isExist(Long userId);
-
+    @Query(value = "SELECT EXISTS(SELECT 1 FROM users WHERE id=?1)", nativeQuery = true)
+    boolean userExists(Long userId);
 }

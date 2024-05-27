@@ -6,16 +6,11 @@ import lombok.NoArgsConstructor;
 import ru.practicum.shareit.groups.Create;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ItemDto {
-    @NotBlank(message = "Имя не может быть пустым.", groups = Create.class)
-    private String name;
+public class CommentDto {
     @NotBlank(message = "Описание не может быть пустым.", groups = Create.class)
-    private String description;
-    @NotNull(message = "Поле доступа не может быть пустым.", groups = Create.class)
-    private Boolean available;
+    private String text;
 }
