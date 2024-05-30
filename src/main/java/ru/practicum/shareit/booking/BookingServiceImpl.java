@@ -2,6 +2,9 @@ package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -52,7 +55,7 @@ public class BookingServiceImpl implements BookingService {
         return bookingRepository.findByIdAndBookerIdOrItemOwnerId(bookingId, userId, userId).orElseThrow(NoSuchElementException::new);
     }
 
-    public List<Booking> getAllBookings(Long userId, String state) {
+    public List<Booking> getAllBookings(Long userId, String state, Pageable page) {
         if (!userRepository.userExists(userId)) {
             throw new NoSuchElementException();
         }
@@ -60,32 +63,34 @@ public class BookingServiceImpl implements BookingService {
         switch (state) {
             case "CURRENT":
                 return bookingRepository.findAllByBookerIdAndStatusInAndStartBeforeAndEndAfterOrderByStartAsc(
-                        userId, statusesInQuery, LocalDateTime.now(), LocalDateTime.now()
+                        userId, statusesInQuery, LocalDateTime.now(), LocalDateTime.now(), page
                 );
             case "PAST":
                 return bookingRepository.findAllByBookerIdAndStatusInAndEndBeforeOrderByEndDesc(
-                        userId, statusesInQuery, LocalDateTime.now()
+                        userId, statusesInQuery, LocalDateTime.now(), page
                 );
             default:
-                return bookingRepository.findAllByBookerIdAndStatusInOrderByStartDesc(userId, statusesInQuery);
+                return bookingRepository.findAllByBookerIdAndStatusInOrderByStartDesc(
+                        userId, statusesInQuery, page
+                );
         }
     }
 
-    public List<Booking> getAllBookingItems(Long userId, String state) {
+    public List<Booking> getAllBookingItems(Long userId, String state, Pageable page) {
         User user = userRepository.findById(userId).orElseThrow(NoSuchElementException::new);
         List<Status> statusesInQuery = Status.toStatus(state);
         switch (state) {
             case "CURRENT":
                 return bookingRepository.findAllByItemInAndStatusInAndStartBeforeAndEndAfterOrderByStartAsc(
-                        itemRepository.findAllByOwner(user), statusesInQuery, LocalDateTime.now(), LocalDateTime.now()
+                        itemRepository.findAllByOwner(user), statusesInQuery, LocalDateTime.now(), LocalDateTime.now(), page
                 );
             case "PAST":
                 return bookingRepository.findAllByItemInAndStatusInAndEndBeforeOrderByEndDesc(
-                        itemRepository.findAllByOwner(user), statusesInQuery, LocalDateTime.now()
+                        itemRepository.findAllByOwner(user), statusesInQuery, LocalDateTime.now(), page
                 );
             default:
                 return bookingRepository.findAllByItemInAndStatusInOrderByStartDesc(
-                        itemRepository.findAllByOwner(user), statusesInQuery
+                        itemRepository.findAllByOwner(user), statusesInQuery, page
                 );
         }
     }

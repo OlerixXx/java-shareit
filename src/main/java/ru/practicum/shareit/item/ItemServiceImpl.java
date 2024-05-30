@@ -2,20 +2,20 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.item.comparator.ItemRequestDtoComparator;
-import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.dto.CommentRequestDto;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemRequestDto;
+import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.RequestRepository;
+import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
@@ -33,11 +33,22 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final RequestRepository requestRepository;
 
     @Transactional
-    public Item create(Long userId, ItemDto itemDto) {
-        Item item = ItemMapper.toItem(itemDto, userRepository.findById(userId).orElseThrow(NoSuchElementException::new));
-        return itemRepository.save(item);
+    public ItemUserRequestIdDto create(Long userId, ItemDto itemDto) {
+        Request request;
+        if (itemDto.getRequestId() == null) {
+            request = null;
+        } else {
+            request = requestRepository.findById(itemDto.getRequestId()).orElseThrow(NoSuchElementException::new);
+        }
+        Item item = ItemMapper.toItem(itemDto,
+                userRepository.findById(userId).orElseThrow(NoSuchElementException::new),
+                request
+        );
+        itemRepository.save(item);
+        return ItemMapper.toItemUserRequestIdDto(item);
     }
 
     @Transactional
@@ -70,19 +81,19 @@ public class ItemServiceImpl implements ItemService {
         return getItemRequestDto(userId, itemRepository.findById(itemId).orElseThrow(NoSuchElementException::new));
     }
 
-    public List<ItemRequestDto> getAll(Long userId) {
-        List<Item> itemList = itemRepository.findAllByOwner(userRepository.findById(userId).orElseThrow(NoSuchElementException::new));
+    public List<ItemRequestDto> getAll(Long userId, Pageable page) {
+        List<Item> itemList = itemRepository.findAllByOwner(userRepository.findById(userId).orElseThrow(NoSuchElementException::new), page);
         return itemList.stream()
                 .map(item -> getItemRequestDto(userId, item))
                 .sorted(new ItemRequestDtoComparator())
                 .collect(Collectors.toList());
     }
 
-    public List<Item> search(Long userId, String text) {
+    public List<Item> search(Long userId, String text, Pageable page) {
         if (text == null || text.trim().isEmpty()) {
             return Collections.emptyList();
         }
-        return itemRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndAvailableIsTrue(text, text);
+        return itemRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndAvailableIsTrue(text, text, page);
     }
 
     private boolean ownerMatches(Long userId, Long itemId) {

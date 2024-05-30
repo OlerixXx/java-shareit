@@ -1,5 +1,7 @@
 package ru.practicum.shareit.booking;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ru.practicum.shareit.booking.model.Booking;
@@ -17,21 +19,21 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query(value = "select b from Booking as b where b.id = ?1 AND (b.booker.id = ?2 OR b.item.owner.id = ?3)")
     Optional<Booking> findByIdAndBookerIdOrItemOwnerId(Long bookingId, Long userId1, Long userId2);
 
-    List<Booking> findAllByBookerIdAndStatusInAndStartBeforeAndEndAfterOrderByStartAsc(Long booker, List<Status> statusList, LocalDateTime firstNow, LocalDateTime secondNow);
+    List<Booking> findAllByBookerIdAndStatusInAndStartBeforeAndEndAfterOrderByStartAsc(Long booker, List<Status> statusList, LocalDateTime firstNow, LocalDateTime secondNow, Pageable pageable);
 
-    List<Booking> findAllByBookerIdAndStatusInAndEndBeforeOrderByEndDesc(Long booker, List<Status> statusList, LocalDateTime now);
+    List<Booking> findAllByBookerIdAndStatusInAndEndBeforeOrderByEndDesc(Long booker, List<Status> statusList, LocalDateTime now, Pageable pageable);
 
     List<Booking> findAllByBookerIdAndStatusInAndStartAfterOrderByStartAsc(Long booker, List<Status> statusList, LocalDateTime now);
 
-    List<Booking> findAllByItemInAndStatusInAndStartBeforeAndEndAfterOrderByStartAsc(List<Item> itemList, List<Status> statusList, LocalDateTime firstNow, LocalDateTime secondNow);
+    List<Booking> findAllByItemInAndStatusInAndStartBeforeAndEndAfterOrderByStartAsc(List<Item> itemList, List<Status> statusList, LocalDateTime firstNow, LocalDateTime secondNow, Pageable pageable);
 
-    List<Booking> findAllByItemInAndStatusInAndEndBeforeOrderByEndDesc(List<Item> itemList, List<Status> statusList, LocalDateTime now);
+    List<Booking> findAllByItemInAndStatusInAndEndBeforeOrderByEndDesc(List<Item> itemList, List<Status> statusList, LocalDateTime now, Pageable pageable);
 
     List<Booking> findAllByItemInAndStatusInAndStartAfterOrderByStartAsc(List<Item> itemList, List<Status> statusList, LocalDateTime now);
 
-    List<Booking> findAllByBookerIdAndStatusInOrderByStartDesc(Long booker, List<Status> statusList);
+    List<Booking> findAllByBookerIdAndStatusInOrderByStartDesc(Long booker, List<Status> statusList, Pageable pageable);
 
-    List<Booking> findAllByItemInAndStatusInOrderByStartDesc(List<Item> itemList, List<Status> statusList);
+    List<Booking> findAllByItemInAndStatusInOrderByStartDesc(List<Item> itemList, List<Status> statusList, Pageable pageable);
 
     @Query(value = "SELECT * FROM bookings WHERE end_date >= ?1 AND item_id = ?2 ORDER BY end_date LIMIT 1", nativeQuery = true)
     Optional<Booking> findNextBooking(LocalDateTime now, Long itemId);
