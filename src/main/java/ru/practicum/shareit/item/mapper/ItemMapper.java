@@ -75,7 +75,7 @@ public class ItemMapper {
 
     public static List<ItemRequestWithoutUserDto> toListItemRequestWithoutUserDto(List<Item> items) {
         return items.stream()
-                .map(item -> new ItemRequestWithoutUserDto (
+                .map(item -> new ItemRequestWithoutUserDto(
                         item.getId(),
                         item.getName(),
                         item.getDescription(),
