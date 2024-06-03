@@ -16,14 +16,6 @@ import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ItemMapper {
-    public static ItemDto toItemDto(Item item) {
-        return new ItemDto(
-                item.getName(),
-                item.getDescription(),
-                item.getAvailable(),
-                item.getRequest().getId()
-        );
-    }
 
     public static Item toItem(ItemDto itemDto, User user, Request request) {
         return new Item(

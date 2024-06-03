@@ -10,12 +10,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import ru.practicum.shareit.exception.ErrorHandler;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -32,22 +34,21 @@ public class UserControllerTest {
 
     @Mock
     UserService userService;
-
     @InjectMocks
     UserController userController;
+    @InjectMocks
+    ErrorHandler errorHandler;
 
     ObjectMapper mapper = new ObjectMapper();
-
     MockMvc mvc;
-
     UserDto userDto;
-
     User user;
 
     @BeforeEach
     void setUp() {
         mvc = MockMvcBuilders
                 .standaloneSetup(userController)
+                .setControllerAdvice(errorHandler)
                 .build();
 
         userDto = new UserDto(
@@ -110,6 +111,15 @@ public class UserControllerTest {
     }
 
     @Test
+    void getUser_whenUserNotFound_thenReturn404() throws Exception {
+        when(userService.getUser(anyLong()))
+                .thenThrow(NoSuchElementException.class);
+
+        mvc.perform(get("/users/1"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     void getAll_whenUserFound_thenReturnListNotEmpty() throws Exception {
         when(userService.getAll())
                 .thenReturn(List.of(user));
@@ -128,5 +138,18 @@ public class UserControllerTest {
                 .andExpect(status().isOk());
 
         verify(userService).remove(1L);
+    }
+
+    @Test
+    void create_whenInvalidInput_thenReturns400() throws Exception {
+        UserDto userDto = new UserDto(
+                null,
+                null
+        );
+
+        mvc.perform(post("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(userDto)))
+                .andExpect(status().isBadRequest());
     }
 }

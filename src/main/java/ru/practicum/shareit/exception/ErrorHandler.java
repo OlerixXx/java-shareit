@@ -40,11 +40,4 @@ public class ErrorHandler {
         log.info(e.getMessage());
         return new ErrorResponse(e.toString());
     }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleEmailAlreadyExistsException(final EmailAlreadyExistsException e) {
-        log.info(e.getMessage());
-        return new ErrorResponse(e.toString());
-    }
 }

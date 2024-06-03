@@ -77,6 +77,20 @@ public class UserServiceTest {
     }
 
     @Test
+    void updateUser_whenUserFound_thenUpdateOnlyName() {
+        User newUser = new User(user.getId(), null, "newemail@mail.ru", LocalDateTime.now());
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        User actualUser = userService.update(newUser);
+
+        verify(userRepository).save(any(User.class));
+        assertEquals(newUser.getName(), user.getName());
+        assertEquals(newUser.getEmail(), actualUser.getEmail());
+        assertEquals(newUser.getRegistrationDate(), actualUser.getRegistrationDate());
+    }
+
+    @Test
     void updateUser_whenUserFound_thenUpdateAllFields() {
         User newUser = new User(user.getId(), "newUser", "newemail@mail.ru", LocalDateTime.now());
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
