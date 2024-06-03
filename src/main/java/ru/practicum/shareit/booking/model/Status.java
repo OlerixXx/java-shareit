@@ -10,7 +10,7 @@ public enum Status {
     REJECTED,
     CANCELED;
 
-    static final Map<String, List<Status>> statusMap = new HashMap<>() {{
+    private static final Map<String, List<Status>> statusMap = new HashMap<>() {{
         put("ALL", List.of(APPROVED, WAITING, REJECTED, CANCELED));
         put("CURRENT", List.of(APPROVED, REJECTED));
         put("WAITING", List.of(WAITING));
