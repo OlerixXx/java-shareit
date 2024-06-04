@@ -150,7 +150,7 @@ public class BookingServiceTest {
 
         assertAll(
                 () -> assertEquals(list.size(), 1),
-                () ->assertEquals(list.get(0), booking)
+                () -> assertEquals(list.get(0), booking)
         );
     }
 
