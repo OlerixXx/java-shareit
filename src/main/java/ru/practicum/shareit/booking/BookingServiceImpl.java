@@ -2,7 +2,9 @@ package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -60,16 +62,19 @@ public class BookingServiceImpl implements BookingService {
         List<Status> statusesInQuery = Status.toStatus(state);
         switch (state) {
             case "CURRENT":
-                return bookingRepository.findAllByBookerIdAndStatusInAndStartBeforeAndEndAfterOrderByStartAsc(
-                        userId, statusesInQuery, LocalDateTime.now(), LocalDateTime.now(), page
+                return bookingRepository.findAllByBookerIdAndStatusInAndStartBeforeAndEndAfter(
+                        userId, statusesInQuery, LocalDateTime.now(), LocalDateTime.now(),
+                        PageRequest.of(page.getPageNumber(), page.getPageSize(), Sort.by("start").ascending())
                 );
             case "PAST":
-                return bookingRepository.findAllByBookerIdAndStatusInAndEndBeforeOrderByEndDesc(
-                        userId, statusesInQuery, LocalDateTime.now(), page
+                return bookingRepository.findAllByBookerIdAndStatusInAndEndBefore(
+                        userId, statusesInQuery, LocalDateTime.now(),
+                        PageRequest.of(page.getPageNumber(), page.getPageSize(), Sort.by("end").descending())
                 );
             default:
-                return bookingRepository.findAllByBookerIdAndStatusInOrderByStartDesc(
-                        userId, statusesInQuery, page
+                return bookingRepository.findAllByBookerIdAndStatusIn(
+                        userId, statusesInQuery,
+                        PageRequest.of(page.getPageNumber(), page.getPageSize(), Sort.by("start").descending())
                 );
         }
     }
@@ -79,16 +84,19 @@ public class BookingServiceImpl implements BookingService {
         List<Status> statusesInQuery = Status.toStatus(state);
         switch (state) {
             case "CURRENT":
-                return bookingRepository.findAllByItemInAndStatusInAndStartBeforeAndEndAfterOrderByStartAsc(
-                        itemRepository.findAllByOwner(user), statusesInQuery, LocalDateTime.now(), LocalDateTime.now(), page
+                return bookingRepository.findAllByItemInAndStatusInAndStartBeforeAndEndAfter(
+                        itemRepository.findAllByOwner(user), statusesInQuery, LocalDateTime.now(), LocalDateTime.now(),
+                        PageRequest.of(page.getPageNumber(), page.getPageSize(), Sort.by("start").ascending())
                 );
             case "PAST":
-                return bookingRepository.findAllByItemInAndStatusInAndEndBeforeOrderByEndDesc(
-                        itemRepository.findAllByOwner(user), statusesInQuery, LocalDateTime.now(), page
+                return bookingRepository.findAllByItemInAndStatusInAndEndBefore(
+                        itemRepository.findAllByOwner(user), statusesInQuery, LocalDateTime.now(),
+                        PageRequest.of(page.getPageNumber(), page.getPageSize(), Sort.by("end").descending())
                 );
             default:
-                return bookingRepository.findAllByItemInAndStatusInOrderByStartDesc(
-                        itemRepository.findAllByOwner(user), statusesInQuery, page
+                return bookingRepository.findAllByItemInAndStatusIn(
+                        itemRepository.findAllByOwner(user), statusesInQuery,
+                        PageRequest.of(page.getPageNumber(), page.getPageSize(), Sort.by("start").descending())
                 );
         }
     }

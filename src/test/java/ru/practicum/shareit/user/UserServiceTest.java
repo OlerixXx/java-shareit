@@ -99,6 +99,7 @@ public class UserServiceTest {
         User actualUser = userService.update(newUser);
 
         verify(userRepository).save(any(User.class));
+
         assertEquals(newUser.getName(), actualUser.getName());
         assertEquals(newUser.getEmail(), actualUser.getEmail());
         assertEquals(newUser.getRegistrationDate(), actualUser.getRegistrationDate());

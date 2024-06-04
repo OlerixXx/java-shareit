@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.pageable.ConvertPageable;
 import ru.practicum.shareit.request.dto.RequestDto;
 import ru.practicum.shareit.request.dto.RequestWithItemsDto;
 import ru.practicum.shareit.request.model.Request;
@@ -104,9 +105,9 @@ public class RequestServiceTest {
 
     @Test
     void getAllRequestsItems_whenAllExcludingIOwner_thenReturnRequestsList() {
-        when(requestRepository.findAllExcludingIOwner(user.getId(), null)).thenReturn(List.of(request));
+        when(requestRepository.findAllExcludingOwner(any(), any())).thenReturn(List.of(request));
 
-        List<RequestWithItemsDto> actualBooking = requestService.getAllRequestsItems(user.getId(), null);
+        List<RequestWithItemsDto> actualBooking = requestService.getAllRequestsItems(user.getId(), ConvertPageable.toMakePage(0, 10));
 
         assertEquals(actualBooking.size(), 1);
         assertEquals(actualBooking.get(0).getId(), request.getId());

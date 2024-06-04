@@ -11,6 +11,6 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
 
     List<Request> findAllByRequestorIdOrderByCreatedDesc(Long requestor);
 
-    @Query(value = "SELECT * FROM requests WHERE requestor_id != ?1 ORDER BY created DESC", nativeQuery = true)
-    List<Request> findAllExcludingIOwner(Long requestor, Pageable pageable);
+    @Query(value = "SELECT * FROM requests WHERE requestor_id != ?1", nativeQuery = true)
+    List<Request> findAllExcludingOwner(Long requestor, Pageable pageable);
 }

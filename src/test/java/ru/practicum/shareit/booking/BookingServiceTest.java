@@ -12,6 +12,7 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.pageable.ConvertPageable;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
@@ -143,14 +144,14 @@ public class BookingServiceTest {
     @Test
     void getAllBookings_whenStateAll_thenReturnAllBookings() {
         when(userRepository.userExists(user.getId())).thenReturn(true);
-        when(bookingRepository.findAllByBookerIdAndStatusInOrderByStartDesc(
-                user.getId(), Status.toStatus("ALL"), null
-        )).thenReturn(List.of(booking));
+        when(bookingRepository.findAllByBookerIdAndStatusIn(any(), any(), any())).thenReturn(List.of(booking));
 
-        List<Booking> list = bookingService.getAllBookings(user.getId(), "ALL", null);
+        List<Booking> list = bookingService.getAllBookings(user.getId(), "ALL", ConvertPageable.toMakePage(0, 10));
 
-        assertEquals(list.size(), 1);
-        assertEquals(list.get(0), booking);
+        assertAll(
+                () -> assertEquals(list.size(), 1),
+                () ->assertEquals(list.get(0), booking)
+        );
     }
 
     @Test
@@ -162,14 +163,16 @@ public class BookingServiceTest {
         booking1.setEnd(LocalDateTime.now().plusDays(1));
 
         when(userRepository.userExists(user.getId())).thenReturn(true);
-        when(bookingRepository.findAllByBookerIdAndStatusInAndStartBeforeAndEndAfterOrderByStartAsc(
-                eq(user.getId()), eq(Status.toStatus("CURRENT")), any(LocalDateTime.class), any(LocalDateTime.class), eq(null)
+        when(bookingRepository.findAllByBookerIdAndStatusInAndStartBeforeAndEndAfter(
+                eq(user.getId()), eq(Status.toStatus("CURRENT")), any(LocalDateTime.class), any(LocalDateTime.class), any()
         )).thenReturn(List.of(booking1));
 
-        List<Booking> list = bookingService.getAllBookings(user.getId(), "CURRENT", null);
+        List<Booking> list = bookingService.getAllBookings(user.getId(), "CURRENT", ConvertPageable.toMakePage(0, 10));
 
-        assertEquals(list.size(), 1);
-        assertEquals(list.get(0), booking1);
+        assertAll(
+                () -> assertEquals(list.size(), 1),
+                () -> assertEquals(list.get(0), booking1)
+        );
     }
 
     @Test
@@ -181,14 +184,16 @@ public class BookingServiceTest {
         booking1.setEnd(LocalDateTime.now().minusDays(1));
 
         when(userRepository.userExists(user.getId())).thenReturn(true);
-        when(bookingRepository.findAllByBookerIdAndStatusInAndEndBeforeOrderByEndDesc(
-                eq(user.getId()), eq(Status.toStatus("PAST")), any(LocalDateTime.class), eq(null)
+        when(bookingRepository.findAllByBookerIdAndStatusInAndEndBefore(
+                eq(user.getId()), eq(Status.toStatus("PAST")), any(LocalDateTime.class), any()
         )).thenReturn(List.of(booking1));
 
-        List<Booking> list = bookingService.getAllBookings(user.getId(), "PAST", null);
+        List<Booking> list = bookingService.getAllBookings(user.getId(), "PAST", ConvertPageable.toMakePage(0, 10));
 
-        assertEquals(list.size(), 1);
-        assertEquals(list.get(0), booking1);
+        assertAll(
+                () -> assertEquals(list.size(), 1),
+                () -> assertEquals(list.get(0), booking1)
+        );
     }
 
     @Test
@@ -200,14 +205,14 @@ public class BookingServiceTest {
         booking1.setEnd(LocalDateTime.now().plusDays(1));
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
         when(itemRepository.findAllByOwner(user)).thenReturn(List.of(item));
-        when(bookingRepository.findAllByItemInAndStatusInOrderByStartDesc(
-                List.of(item), Status.toStatus("ALL"), null
-        )).thenReturn(List.of(booking1));
+        when(bookingRepository.findAllByItemInAndStatusIn(any(), any(), any())).thenReturn(List.of(booking1));
 
-        List<Booking> list = bookingService.getAllBookingItems(user.getId(), "ALL", null);
+        List<Booking> list = bookingService.getAllBookingItems(user.getId(), "ALL", ConvertPageable.toMakePage(0, 10));
 
-        assertEquals(list.size(), 1);
-        assertEquals(list.get(0), booking1);
+        assertAll(
+                () -> assertEquals(list.size(), 1),
+                () -> assertEquals(list.get(0), booking1)
+        );
     }
 
     @Test
@@ -219,14 +224,16 @@ public class BookingServiceTest {
         booking1.setEnd(LocalDateTime.now().plusDays(1));
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
         when(itemRepository.findAllByOwner(user)).thenReturn(List.of(item));
-        when(bookingRepository.findAllByItemInAndStatusInAndStartBeforeAndEndAfterOrderByStartAsc(
-                eq(List.of(item)), eq(Status.toStatus("CURRENT")), any(LocalDateTime.class), any(LocalDateTime.class), eq(null)
+        when(bookingRepository.findAllByItemInAndStatusInAndStartBeforeAndEndAfter(
+                eq(List.of(item)), eq(Status.toStatus("CURRENT")), any(LocalDateTime.class), any(LocalDateTime.class), any()
         )).thenReturn(List.of(booking1));
 
-        List<Booking> list = bookingService.getAllBookingItems(user.getId(), "CURRENT", null);
+        List<Booking> list = bookingService.getAllBookingItems(user.getId(), "CURRENT", ConvertPageable.toMakePage(0, 10));
 
-        assertEquals(list.size(), 1);
-        assertEquals(list.get(0), booking1);
+        assertAll(
+                () -> assertEquals(list.size(), 1),
+                () -> assertEquals(list.get(0), booking1)
+        );
     }
 
     @Test
@@ -238,14 +245,16 @@ public class BookingServiceTest {
         booking1.setEnd(LocalDateTime.now().minusDays(1));
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
         when(itemRepository.findAllByOwner(user)).thenReturn(List.of(item));
-        when(bookingRepository.findAllByItemInAndStatusInAndEndBeforeOrderByEndDesc(
-                eq(List.of(item)), eq(Status.toStatus("PAST")), any(LocalDateTime.class), eq(null)
+        when(bookingRepository.findAllByItemInAndStatusInAndEndBefore(
+                eq(List.of(item)), eq(Status.toStatus("PAST")), any(LocalDateTime.class), any()
         )).thenReturn(List.of(booking1));
 
-        List<Booking> list = bookingService.getAllBookingItems(user.getId(), "PAST", null);
+        List<Booking> list = bookingService.getAllBookingItems(user.getId(), "PAST", ConvertPageable.toMakePage(0, 10));
 
-        assertEquals(list.size(), 1);
-        assertEquals(list.get(0), booking1);
+        assertAll(
+                () -> assertEquals(list.size(), 1),
+                () -> assertEquals(list.get(0), booking1)
+        );
     }
 
     @Test
@@ -266,7 +275,9 @@ public class BookingServiceTest {
         bookingRequest.setBooker(user);
         BookingRequestDto bookingRequestDto = BookingMapper.toRequest(bookingRequest);
 
-        assertNull(bookingRequestDto.getId());
-        assertNull(bookingRequestDto.getBookerId());
+        assertAll(
+                () -> assertNull(bookingRequestDto.getId()),
+                () -> assertNull(bookingRequestDto.getBookerId())
+        );
     }
 }
