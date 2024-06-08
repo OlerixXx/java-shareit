@@ -7,6 +7,7 @@ import ru.practicum.shareit.groups.Create;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 
 @Data
 @AllArgsConstructor
@@ -18,4 +19,6 @@ public class ItemDto {
     private String description;
     @NotNull(message = "Поле доступа не может быть пустым.", groups = Create.class)
     private Boolean available;
+    @Null(groups = {})
+    private Long requestId;
 }

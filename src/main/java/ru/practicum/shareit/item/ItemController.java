@@ -5,11 +5,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.groups.Create;
 import ru.practicum.shareit.groups.Update;
-import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.dto.CommentRequestDto;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemRequestDto;
+import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.pageable.ConvertPageable;
 
 import java.util.List;
 
@@ -20,7 +18,7 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public Item create(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody @Validated(Create.class) ItemDto itemDto) {
+    public ItemUserRequestIdDto create(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody @Validated(Create.class) ItemDto itemDto) {
         return itemService.create(userId, itemDto);
     }
 
@@ -40,12 +38,17 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemRequestDto> getAll(@RequestHeader("X-Sharer-User-Id") Long userId) {
-        return itemService.getAll(userId);
+    public List<ItemRequestDto> getAll(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                       @RequestParam(required = false, defaultValue = "0") Integer from,
+                                       @RequestParam(required = false, defaultValue = "10") Integer size) {
+        return itemService.getAll(userId, ConvertPageable.toMakePage(from, size));
     }
 
     @GetMapping("/search")
-    public List<Item> search(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam("text") String text) {
-        return itemService.search(userId, text);
+    public List<Item> search(@RequestHeader("X-Sharer-User-Id") Long userId,
+                             @RequestParam("text") String text,
+                             @RequestParam(required = false, defaultValue = "0") Integer from,
+                             @RequestParam(required = false, defaultValue = "10") Integer size) {
+        return itemService.search(userId, text, ConvertPageable.toMakePage(from, size));
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.groups.Create;
+import ru.practicum.shareit.pageable.ConvertPageable;
 
 import java.util.List;
 
@@ -31,12 +32,17 @@ public class BookingController {
     }
 
     @GetMapping()
-    public List<Booking> getAllBookings(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam(required = false, defaultValue = "ALL") String state) {
-        return bookingService.getAllBookings(userId, state);
+    public List<Booking> getAllBookings(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                        @RequestParam(required = false, defaultValue = "ALL") String state,
+                                        @RequestParam(required = false, defaultValue = "0") Integer from,
+                                        @RequestParam(required = false, defaultValue = "10") Integer size) {
+        return bookingService.getAllBookings(userId, state, ConvertPageable.toMakePage(from, size));
     }
 
     @GetMapping("/owner")
-    public List<Booking> getAllBookingItems(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam(required = false, defaultValue = "ALL") String state) {
-        return bookingService.getAllBookingItems(userId, state);
+    public List<Booking> getAllBookingItems(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam(required = false, defaultValue = "ALL") String state,
+                                            @RequestParam(required = false, defaultValue = "0") Integer from,
+                                            @RequestParam(required = false, defaultValue = "10") Integer size) {
+        return bookingService.getAllBookingItems(userId, state, ConvertPageable.toMakePage(from, size));
     }
 }
