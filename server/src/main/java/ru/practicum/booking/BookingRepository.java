@@ -40,6 +40,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query(value = "SELECT * FROM bookings WHERE start_date < ?1 AND item_id = ?2 AND status = 'APPROVED' ORDER BY start_date DESC LIMIT 1", nativeQuery = true)
     Optional<Booking> findLastBooking(LocalDateTime now, Long itemId);
 
-    @Query(value = "SELECT EXISTS (SELECT * FROM bookings WHERE item_id = ?1 AND booker_id = ?2 AND status = ?3) OR EXISTS (SELECT * FROM bookings WHERE start_date <= ?4 AND item_id = ?1 AND booker_id = ?2 ORDER BY start_date LIMIT 1)", nativeQuery = true)
+    @Query(value = "SELECT EXISTS (SELECT * FROM bookings WHERE item_id = ?1 AND booker_id = ?2 AND status = ?3) AND EXISTS (SELECT * FROM bookings WHERE end_date <= ?4 AND item_id = ?1 AND booker_id = ?2 ORDER BY end_date LIMIT 1)", nativeQuery = true)
     Boolean existsBookings(Long itemId, Long bookerId, String status, LocalDateTime now);
 }
