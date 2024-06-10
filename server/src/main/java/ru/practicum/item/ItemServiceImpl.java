@@ -53,7 +53,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional
     public CommentRequestDto create(Long userId, Long itemId, CommentDto commentDto) {
-        if (bookingRepository.existsBookings(itemId, userId, Status.APPROVED, LocalDateTime.now())) {
+        if (bookingRepository.existsBookings(itemId, userId, Status.APPROVED.toString(), LocalDateTime.now())) {
             Comment comment = CommentMapper.toComment(
                     commentDto,
                     itemRepository.findById(itemId).orElseThrow(),
