@@ -1,7 +1,9 @@
 package ru.practicum.item;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.groups.Create;
 import ru.practicum.item.dto.*;
 import ru.practicum.item.model.Item;
 import ru.practicum.pageable.ConvertPageable;
